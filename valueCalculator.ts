@@ -45,6 +45,7 @@ const userCards:UserCard[] = [
     {card_number: 3, card_type: CardType.HEART, card_count: 1},
     {card_number: 4, card_type: CardType.HEART, card_count: 3}
 ]
+let calculateDeck: UserCard[] = [...userCards]
 function getValueCards(_deckJoker: Card):CardWithValue[] {
     const valueCards:CardWithValue[] = []
     let _prefix: number
@@ -197,6 +198,10 @@ function isDeckJoker(_userCard: Card): boolean {
     return _userCard.card_number == deckJoker.card_number && _userCard.card_type == deckJoker.card_type
 }
 
+function isDefaultJoker(_userCard: Card): boolean {
+    return _userCard.card_number == 0 && _userCard.card_type == CardType.DEFAULT_JOKER
+}
+
 function isPrefixJoker(_userCard: Card): boolean {
     return _userCard.card_number == deckJoker.card_number - 1 && _userCard.card_type == deckJoker.card_type
 }
@@ -204,27 +209,72 @@ function isPrefixJoker(_userCard: Card): boolean {
 function isSuffixJoker(_userCard: Card): boolean {
     return _userCard.card_number == deckJoker.card_number + 1 && _userCard.card_type == deckJoker.card_type
 }
-function hasMarriage(_userCards: Card[]): boolean {
+function hasMarriage(_userCards: UserCard[], removeMarriageCard: boolean): boolean {
+    let hasMarriage: boolean
     let hasDeckJoker: boolean = false
     let hasPrefix: boolean = false
     let hasSuffix: boolean = false
-    _userCards.forEach((userCard: Card)=> {
+    let deckJokerCard: UserCard
+    let prefixJokerCard: UserCard
+    let suffixJokerCard: UserCard
+    _userCards.forEach((userCard: UserCard)=> {
         if (!hasDeckJoker) {
             hasDeckJoker = isDeckJoker(userCard)
+            if (hasDeckJoker) {
+                deckJokerCard = userCard
+            }
         }
         if (!hasPrefix) {
             hasPrefix = isPrefixJoker(userCard)
+            if (hasPrefix) {
+                prefixJokerCard = userCard
+            }
         }
         if (!hasSuffix) {
             hasSuffix = isSuffixJoker(userCard)
+            if (hasPrefix) {
+                suffixJokerCard = userCard
+            }
         }
     })
-    return hasDeckJoker && hasPrefix && hasSuffix
+    hasMarriage = hasDeckJoker && hasPrefix && hasSuffix
+    // @ts-ignore
+    if (hasMarriage && removeMarriageCard && !!deckJokerCard && !!prefixJokerCard && !! suffixJokerCard) {
+        removeMarriageCards(deckJokerCard, prefixJokerCard, suffixJokerCard)
+    }
+    return hasMarriage
 }
 
-function calculateUserValueCardsPoint(_valueCards: CardWithValue[], _userCards: UserCard[]): number {
+function removeCard(_card: UserCard) {
+    calculateDeck = calculateDeck.filter(_cardTemp => {
+        if (_cardTemp.card_number === _card.card_number && _cardTemp.card_type === _card.card_type) {
+            if (_card.card_count <= 1) {
+                return false
+            } else {
+                const currentUserCard = calculateDeck.find(userCard =>
+                    userCard.card_number === _card.card_number &&
+                    userCard.card_type === _card.card_type
+                );
+                if (currentUserCard) {
+                    currentUserCard.card_count -= 1 // Decrease the card_count by 1
+                }
+                return true
+            }
+        } else {
+            return true
+        }
+    })
+}
+
+function removeMarriageCards(deckJokerCard: UserCard, prefixJokerCard: UserCard, suffixJokerCard: UserCard) {
+    removeCard(deckJokerCard)
+    removeCard(prefixJokerCard)
+    removeCard(suffixJokerCard)
+}
+
+function calculateUserValueCardsPoint(_valueCards: CardWithValue[]): number {
     let _totalPoints: number = 0
-    let _hasMarriage: boolean = hasMarriage(_userCards)
+    let _hasMarriage: boolean = hasMarriage(calculateDeck, true)
     if (_hasMarriage) {
         if (IS_FLOOR_MARRIAGE) {
             console.log("FLOOR MARRIAGE +", FLOOR_MARRIAGE_POINT)
@@ -234,36 +284,24 @@ function calculateUserValueCardsPoint(_valueCards: CardWithValue[], _userCards: 
             _totalPoints = MARRIAGE_POINT
         }
     }
-    _userCards.forEach((userCard: UserCard)=> {
-        console.log(userCard)
+    console.log("remaining deck before loop  = ", calculateDeck)
+    calculateDeck.forEach((userCard: UserCard)=> {
         if (userCard.card_count == 3) {
             if (IS_FLOOR_SET_OF_THREE) {
-                console.log("FLOOR SET OF THREE +", FLOOR_MARRIAGE_POINT)
+                console.log("FLOOR SET OF THREE +", FLOOR_SET_OF_THREE_POINT)
                 _totalPoints += FLOOR_SET_OF_THREE_POINT
             } else {
-                console.log("SET OF THREE +", FLOOR_MARRIAGE_POINT)
+                console.log("SET OF THREE +", SET_OF_THREE_POINT)
                 _totalPoints += SET_OF_THREE_POINT
             }
         } else {
             _valueCards.forEach((valueCard: CardWithValue)=> {
-                if (_hasMarriage) {
-                    if (!isDeckJoker(userCard) && !isPrefixJoker(userCard) && !isSuffixJoker(userCard)) {
-                        if (
-                            userCard.card_number == valueCard.card_number &&
-                            userCard.card_type == valueCard.card_type &&
-                            userCard.card_count < 3
-                        ) {
-                            _totalPoints += getPointValue(valueCard, userCard.card_count)
-                        }
-                    }
-                } else {
-                    if(
-                        userCard.card_number == valueCard.card_number &&
-                        userCard.card_type == valueCard.card_type &&
-                        userCard.card_count < 3
-                    ) {
-                        _totalPoints += getPointValue(valueCard, userCard.card_count)
-                    }
+                if(
+                    userCard.card_number == valueCard.card_number &&
+                    userCard.card_type == valueCard.card_type &&
+                    userCard.card_count > 0
+                ) {
+                    _totalPoints += getPointValue(valueCard, userCard.card_count)
                 }
             })
         }
@@ -273,5 +311,5 @@ function calculateUserValueCardsPoint(_valueCards: CardWithValue[], _userCards: 
 const valueCards: CardWithValue[] = getValueCards(deckJoker)
 const allValueCardsTotalPoints = calculateAllValueCardsPoint(valueCards)
 console.log(allValueCardsTotalPoints)
-const totalPoints = calculateUserValueCardsPoint(valueCards, userCards)
+const totalPoints = calculateUserValueCardsPoint(valueCards)
 console.log(totalPoints)
