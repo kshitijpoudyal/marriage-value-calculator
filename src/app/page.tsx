@@ -5,7 +5,7 @@ import Camera from "@/app/Camera";
 
 export default function Home() {
     const [ocr, setOcr] = useState('Capture image...');
-    const [capturedImage, setCapturedImage] = useState<string | null>(null);
+    const [capturedImage, setCapturedImage] = useState<string>('/images/0.jpg');
 
     const handleCapture = (imageSrc: string | null) => {
         setCapturedImage(imageSrc);
