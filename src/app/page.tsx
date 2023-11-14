@@ -3,6 +3,7 @@ import {useState} from 'react';
 import CardIdentifier from "@/app/CardIdentifier";
 import Camera from "@/app/Camera";
 import {Card, CardType, UserCard, ValueCalculator} from './ValueCalculator';
+import 'bootstrap/dist/css/bootstrap.css'
 import CardInputForm, {CardFormData} from "@/app/CardInputForm";
 
 export default function Home() {

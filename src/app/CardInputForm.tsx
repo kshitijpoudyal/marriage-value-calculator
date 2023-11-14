@@ -62,10 +62,10 @@ const CardForm: React.FC<CardFormProps> = ({onSubmit}) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h3>Deck Joker</h3>
-            <div>
-                <label>
+        <form onSubmit={handleSubmit} >
+            <h3 className="mb-3">Deck Joker</h3>
+            <div className="mb-3">
+                <label className="form-label">
                     Card Number:
                     <input
                         type="number"
@@ -74,7 +74,7 @@ const CardForm: React.FC<CardFormProps> = ({onSubmit}) => {
                         onChange={handleDeckJokerChange}
                     />
                 </label>
-                <label>
+                <label className="form-label">
                     Card Type:
                     <select
                         name="cardType"
@@ -88,11 +88,11 @@ const CardForm: React.FC<CardFormProps> = ({onSubmit}) => {
                     </select>
                 </label>
             </div>
-            <h3>User Cards</h3>
+            <h3 className="mb-3">User Cards</h3>
             {cards.map((card, index) => (
-                <div key={index}>
-                    <div>
-                        <label>
+                <div key={index} className="mb-3">
+                    <div className="mb-3">
+                        <label className="form-label">
                             Card Number:
                             <input
                                 type="number"
@@ -101,9 +101,7 @@ const CardForm: React.FC<CardFormProps> = ({onSubmit}) => {
                                 onChange={handleChange(index)}
                             />
                         </label>
-                    </div>
-                    <div>
-                        <label>
+                        <label className="form-label">
                             Card Type:
                             <select
                                 name="cardType"
@@ -116,9 +114,7 @@ const CardForm: React.FC<CardFormProps> = ({onSubmit}) => {
                                 <option value={CardType.CLUB}>Club</option>
                             </select>
                         </label>
-                    </div>
-                    <div>
-                        <label>
+                        <label className="form-label">
                             Card Count:
                             <input
                                 type="number"
@@ -127,19 +123,22 @@ const CardForm: React.FC<CardFormProps> = ({onSubmit}) => {
                                 onChange={handleChange(index)}
                             />
                         </label>
-                    </div>
+
                     {cards.length > 1 && (
-                        <button type="button" onClick={() => removeCard(index)}>
-                            Remove
+                        <button type="button" className="btn btn-danger btn-sm" onClick={() => removeCard(index)}>
+                            &#10005; {/* X icon */}
                         </button>
                     )}
+                    </div>
                 </div>
             ))}
             <div>
-                <button type="button" onClick={addCard}>+</button>
+                <button type="button" className="btn btn-primary me-2" onClick={addCard}>
+                    &#43; {/* Plus icon */}
+                </button>
             </div>
             <div>
-                <button type="submit">Submit</button>
+                <button type="submit" className="btn btn-success">Submit</button>
             </div>
         </form>
     );
