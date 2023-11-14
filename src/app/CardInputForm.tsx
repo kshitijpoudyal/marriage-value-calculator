@@ -61,50 +61,90 @@ const CardForm: React.FC<CardFormProps> = ({onSubmit}) => {
         setCards(newCards);
     };
 
+    // const CardInputField = ({ label, type, name, value, onChange }) => (
+    //     <div className="col">
+    //         <label className="form-label">
+    //             {label}:
+    //             {type === 'select' ? (
+    //                 <select
+    //                     name={name}
+    //                     className="form-select"
+    //                     value={value}
+    //                     onChange={onChange}
+    //                 >
+    //                     <option value={CardType.HEART}>Heart</option>
+    //                     <option value={CardType.DIAMOND}>Diamond</option>
+    //                     <option value={CardType.SPADE}>Spade</option>
+    //                     <option value={CardType.CLUB}>Club</option>
+    //                 </select>
+    //             ) : (
+    //                 <input
+    //                     type={type}
+    //                     name={name}
+    //                     className="form-control"
+    //                     value={value}
+    //                     onChange={onChange}
+    //                 />
+    //             )}
+    //         </label>
+    //     </div>
+    // );
+
     return (
-        <form onSubmit={handleSubmit} >
+        <form onSubmit={handleSubmit} className="container mt-4">
             <h3 className="mb-3">Deck Joker</h3>
-            <div className="mb-3">
-                <label className="form-label">
-                    Card Number:
-                    <input
-                        type="number"
-                        name="cardNumber"
-                        value={deckJokerCard.cardNumber}
-                        onChange={handleDeckJokerChange}
-                    />
-                </label>
-                <label className="form-label">
-                    Card Type:
-                    <select
-                        name="cardType"
-                        value={deckJokerCard.cardType}
-                        onChange={handleDeckJokerChange}
-                    >
-                        <option value={CardType.HEART}>Heart</option>
-                        <option value={CardType.DIAMOND}>Diamond</option>
-                        <option value={CardType.SPADE}>Spade</option>
-                        <option value={CardType.CLUB}>Club</option>
-                    </select>
-                </label>
+            <div className="row mb-3">
+                <div className="col">
+                    <label className="form-label">
+                        Card Number:
+                        <input
+                            type="number"
+                            name="cardNumber"
+                            className="form-control"
+                            value={deckJokerCard.cardNumber}
+                            onChange={handleDeckJokerChange}
+                        />
+                    </label>
+                </div>
+                <div className="col">
+                    <label className="form-label">
+                        Card Type:
+                        <select
+                            name="cardType"
+                            className="form-select"
+                            value={deckJokerCard.cardType}
+                            onChange={handleDeckJokerChange}
+                        >
+                            <option value={CardType.HEART}>Heart</option>
+                            <option value={CardType.DIAMOND}>Diamond</option>
+                            <option value={CardType.SPADE}>Spade</option>
+                            <option value={CardType.CLUB}>Club</option>
+                        </select>
+                    </label>
+                </div>
             </div>
+
             <h3 className="mb-3">User Cards</h3>
             {cards.map((card, index) => (
-                <div key={index} className="mb-3">
-                    <div className="mb-3">
+                <div key={index} className="row mb-3">
+                    <div className="col">
                         <label className="form-label">
                             Card Number:
                             <input
                                 type="number"
                                 name="cardNumber"
+                                className="form-control"
                                 value={card.cardNumber}
                                 onChange={handleChange(index)}
                             />
                         </label>
+                    </div>
+                    <div className="col">
                         <label className="form-label">
                             Card Type:
                             <select
                                 name="cardType"
+                                className="form-select"
                                 value={card.cardType}
                                 onChange={handleChange(index)}
                             >
@@ -114,33 +154,36 @@ const CardForm: React.FC<CardFormProps> = ({onSubmit}) => {
                                 <option value={CardType.CLUB}>Club</option>
                             </select>
                         </label>
+                    </div>
+                    <div className="col">
                         <label className="form-label">
                             Card Count:
                             <input
                                 type="number"
                                 name="cardCount"
+                                className="form-control"
                                 value={card.cardCount}
                                 onChange={handleChange(index)}
                             />
                         </label>
-
-                    {cards.length > 1 && (
-                        <button type="button" className="btn btn-danger btn-sm" onClick={() => removeCard(index)}>
-                            &#10005; {/* X icon */}
-                        </button>
-                    )}
                     </div>
+                    {cards.length > 1 && (
+                        <div className="col-auto">
+                            <button type="button" className="btn btn-danger btn-sm mt-4" onClick={() => removeCard(index)}>
+                                &#10005; {/* X icon */}
+                            </button>
+                        </div>
+                    )}
                 </div>
             ))}
-            <div>
+            <div className="my-3">
                 <button type="button" className="btn btn-primary me-2" onClick={addCard}>
                     &#43; {/* Plus icon */}
                 </button>
-            </div>
-            <div>
                 <button type="submit" className="btn btn-success">Submit</button>
             </div>
         </form>
+
     );
 }
 
